@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Carnet de notes — 2026/2027</title>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --rose:#e7a9bd;--rose2:#f7e3e9;--rose3:#c97996;
+    --gris:#666;--gris2:#e6e6e6;--gris3:#f4f4f4;
+    --noir:#222;--blanc:#fff;
+  }
+  body{margin:0;background:#f3f3f3;color:var(--noir);font-family:Arial,Helvetica,sans-serif}
+  button,input,select,textarea{font:inherit}
+  .topbar{background:#fff;border-bottom:2px solid #ddd;position:sticky;top:0;z-index:20}
+  .topbar-inner{max-width:1500px;margin:auto;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+  .brand{font-family:Georgia,serif;font-size:22px;font-weight:700}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{border:1px solid #bbb;background:#fff;border-radius:7px;padding:8px 12px;cursor:pointer}
+  button:hover{background:var(--rose2)}
+  .primary{background:var(--rose);border-color:var(--rose3);font-weight:700}
+  .danger{background:#fff1f1;border-color:#d88}
+  .app{max-width:1500px;margin:18px auto;padding:0 14px}
+  .cover,.card{background:#fff;border:1px solid #ccc;border-radius:10px;box-shadow:0 2px 8px #0000000d;margin-bottom:18px}
+  .cover{padding:28px;text-align:center}
+  .cover h1{font-family:cursive;margin:8px 0;font-size:42px}
+  .cover h2{margin:0;font-weight:400}
+  .cover .quote{margin:14px auto;max-width:700px;font-family:Georgia,serif;font-style:italic;color:#555}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:12px;color:#666}
+  .field input,.field select,.field textarea{width:100%;border:1px solid #bbb;border-radius:5px;padding:7px;background:#fff}
+  .section-title{background:var(--rose2);border-bottom:2px solid var(--rose3);padding:11px 14px;font-weight:700;color:#555}
+  .card-body{padding:14px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tab{background:#e6e6e6;border-color:#bbb}
+  .tab.active{background:var(--rose);font-weight:700}
+  .subtabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+  .subtab.active{background:var(--rose);border-color:var(--rose3);font-weight:700}
+  .sheet{display:none}
+  .sheet.active{display:block}
+  .class-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.5fr;gap:8px;padding:12px;background:#fafafa;border-bottom:1px solid #ddd}
+  .table-wrap{overflow:auto;border:1px solid #aaa}
+  table{border-collapse:collapse;width:100%;min-width:1450px;background:white}
+  th,td{border:1px solid #999;text-align:center;padding:3px}
+  th{background:#f4f4f4;font-size:11px;line-height:1.1}
+  td{height:28px;font-size:12px}
+  th.rotate{height:160px;vertical-align:bottom;width:38px}
+  th.rotate > div{writing-mode:vertical-rl;transform:rotate(180deg);margin:auto;white-space:normal}
+  th.name{min-width:190px}
+  td.num{width:34px}
+  td.name input{min-width:180px;width:100%;border:0;padding:5px}
+  td input.note{width:52px;border:0;text-align:center;padding:5px}
+  td.total{font-weight:700;background:#fafafa}
+  .student-actions{display:flex;gap:8px;margin:10px 0}
+  .small{font-size:12px;color:#666}
+  .summary{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+  .badge{background:#f5f5f5;border:1px solid #ddd;padding:8px 12px;border-radius:7px}
+  .schedule{width:100%;border-collapse:collapse;min-width:750px}
+  .schedule th,.schedule td{height:45px}
+  .notes-area{min-height:330px;width:100%;resize:vertical}
+  .info-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 25px}
+  .info-list .field{margin-bottom:4px}
+  .hidden{display:none!important}
+  .footer{text-align:center;color:#777;font-size:12px;padding:15px}
+  @media(max-width:900px){
+    .grid,.class-head,.info-list{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:600px){
+    .grid,.class-head,.info-list{grid-template-columns:1fr}
+    .cover h1{font-size:32px}
+  }
+  @media print{
+    body{background:#fff}
+    .topbar,.actions,.tabs,.subtabs,.student-actions,.footer{display:none!important}
+    .app{max-width:none;margin:0;padding:0}
+    .card{box-shadow:none;border:0}
+    .sheet{display:none!important}
+    .sheet.active{display:block!important}
+    .table-wrap{overflow:visible}
+    table{min-width:0;font-size:8px}
+    th,td{font-size:8px}
+    th.rotate{height:145px}
+    input{border:0!important}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">Mon carnet de notes — 2026/2027</div>
+    <div class="actions">
+      <button onclick="saveData()">💾 Enregistrer</button>
+      <button onclick="loadData()">↻ Restaurer</button>
+      <button onclick="window.print()">🖨 Imprimer</button>
+      <button class="danger" onclick="clearAll()">Effacer les données</button>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+  <section class="cover">
+    <div>République algérienne démocratique et populaire</div>
+    <div>Ministère de l'éducation nationale</div>
+    <div>Direction de l'éducation de la wilaya de TIZI-OUZOU</div>
+    <div class="quote">« Le maître est un jardinier d’âmes, il fait éclore ce qui sommeille en chacun. »<br>— Rabindranath Tagore</div>
+    <div>PES : <b>BOUZIDI Selma</b></div>
+    <h1>Mon carnet de notes</h1>
+    <h2>2026 / 2027</h2>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Fiche de renseignements</div>
+    <div class="card-body info-list">
+      <div class="field"><label>Date de première nomination</label><input id="nomination" value="Le 05/09/2022 à HAMOUCHE Hocine, Collège d’Ait Abdelmoumène."></div>
+      <div class="field"><label>Établissement actuel</label><input id="etab" value="Ouamrane Amar - Frikat"></div>
+      <div class="field"><label>Date de titularisation</label><input></div>
+      <div class="field"><label>Date d’affectation au poste actuel</label><input></div>
+      <div class="field"><label>CCP n°</label><input value="007999990023541118 /30"></div>
+      <div class="field"><label>CNAS n°</label><input value="000121003879"></div>
+      <div class="field"><label>Nom</label><input value="BOUZIDI"></div>
+      <div class="field"><label>Prénom</label><input value="Selma"></div>
+      <div class="field"><label>Date et lieu de naissance</label><input value="20 Janvier 2000 à Boghni"></div>
+      <div class="field"><label>Adresse personnelle</label><input value="Mahbane, Béni-Mendas, Boghni, Tizi-Ouzou"></div>
+      <div class="field"><label>Situation familiale</label><input value="Célibataire"></div>
+      <div class="field"><label>Nombre d’enfants</label><input value="/"></div>
+      <div class="field"><label>Mobile</label><input></div>
+      <div class="field"><label>Adresse e-mail</label><input value="bouzidiselma00@gmail.com"></div>
+      <div class="field"><label>Diplôme</label><input value="Professeur de l’enseignement secondaire"></div>
+      <div class="field"><label>Spécialité</label><input value="langue française"></div>
+      <div class="field"><label>Date d’obtention</label><input value="Juin 2022"></div>
+      <div class="field"><label>Lieu d’obtention</label><input value="École normale supérieure Bouzareah"></div>
+      <div class="field"><label>Grade</label><input value="professeur de l’enseignement secondaire"></div>
+      <div class="field"><label>Qualité / Catégorie</label><input value="Titulaire / 13"></div>
+      <div class="field"><label>Dernier échelon</label><input></div>
+      <div class="field"><label>Date d’effet</label><input></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Emploi du temps</div>
+    <div class="card-body">
+      <div class="grid">
+        <div class="field"><label>Année scolaire</label><input value="2026/2027"></div>
+        <div class="field"><label>Volume horaire hebdomadaire</label><input></div>
+        <div class="field"><label>Proviseur(e)</label><input></div>
+        <div class="field"><label>Inspecteur(rice)</label><input></div>
+      </div>
+      <div class="table-wrap" style="margin-top:12px">
+        <table class="schedule">
+          <thead><tr><th>Horaire</th><th>Dimanche</th><th>Lundi</th><th>Mardi</th><th>Mercredi</th><th>Jeudi</th></tr></thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+      <div class="field" style="margin-top:12px"><label>Classes assignées</label><textarea></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Notes et tâches</div>
+    <div class="card-body"><textarea class="notes-area" placeholder="Notes, tâches, rappels…"></textarea></div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">Évaluations trimestrielles</div>
+    <div class="card-body">
+      <div class="tabs">
+        <button class="tab active" onclick="showTrim(1)">Premier trimestre</button>
+        <button class="tab" onclick="showTrim(2)">Deuxième trimestre</button>
+        <button class="tab" onclick="showTrim(3)">Troisième trimestre</button>
+      </div>
+      <div id="trim1" class="trim"></div>
+      <div id="trim2" class="trim hidden"></div>
+      <div id="trim3" class="trim hidden"></div>
+    </div>
+  </section>
+  <div class="footer">Carnet de notes numérique — données enregistrées uniquement dans ce navigateur.</div>
+</main>
+
+<script>
+const CRITERIA = [
+  ["absence","Absence et retard","2 pts"],["comportement","Comportement","2 pts"],
+  ["affaires","Apport des affaires d’apprentissage","2 pts"],["cahier","Organisation du cahier","1 pt"],
+  ["participation","Participation","2 pts"],["efficacite","Efficacité","3 pts"],
+  ["realisation","Réalisation (au tableau et sur le cahier)","2 pts"],
+  ["taches","Réalisation des tâches distribuées","3 pts"],["groupe","Travail en groupe","2 pts"],
+  ["initiative","Initiative et contribution","1 pt"]
+];
+
+function inputNum(cls="",max=20){
+  return `<input class="note ${cls}" type="number" min="0" max="${max}" step="0.25">`;
+}
+function buildTable(t,c){
+  let th = `<th class="name">Nom et prénoms</th>`;
+  CRITERIA.forEach(x=> th += `<th class="rotate"><div>${x[1]}<br>${x[2]}</div></th>`);
+  th += `<th class="rotate"><div>Note totale /20</div></th>
+         <th class="rotate"><div>Devoir</div></th>
+         <th class="rotate"><div>Composition</div></th>
+         <th class="rotate"><div>Note du projet</div></th>`;
+  let rows="";
+  for(let i=1;i<=36;i++){
+    rows += `<tr data-row="${i}">
+      <td class="num">${String(i).padStart(2,"0")}</td>
+      <td class="name"><input type="text" placeholder="Nom et prénoms"></td>
+      ${CRITERIA.map(x=>`<td>${inputNum(x[0],parseFloat(x[2]))}</td>`).join("")}
+      <td class="total"><input class="note totalInput" type="number" min="0" max="20" step="0.25" readonly></td>
+      <td>${inputNum("devoir")}</td>
+      <td>${inputNum("composition")}</td>
+      <td>${inputNum("projet")}</td>
+    </tr>`;
+  }
+  return `<div class="table-wrap"><table><thead><tr><th>N°</th>${th}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function buildClass(t,c){
+  return `<div class="sheet ${c===1?'active':''}" id="sheet-${t}-${c}">
+    <div class="subtabs">
+      ${[1,2,3,4,5].map(n=>`<button class="subtab ${n===c?'active':''}" onclick="showClass(${t},${n})">Classe ${n}</button>`).join("")}
+    </div>
+    <div class="class-head">
+      <div class="field"><label>Classe</label><input class="className" placeholder="Classe"></div>
+      <div class="field"><label>Nombre d’élèves</label><input value="36"></div>
+      <div class="field"><label>Filles</label><input type="number" min="0"></div>
+      <div class="field"><label>Garçons</label><input type="number" min="0"></div>
+      <div class="field"><label>Nombre de redoublants</label><input type="number" min="0"></div>
+    </div>
+    <div class="summary">
+      <div class="badge">Prof : <b>BOUZIDI S.</b></div>
+      <div class="badge">Évaluation continue — 20 points</div>
+    </div>
+    ${buildTable(t,c)}
+    <div class="student-actions">
+      <button onclick="addStudent(${t},${c})">+ Ajouter un élève</button>
+      <button onclick="clearClass(${t},${c})">Vider cette classe</button>
+    </div>
+  </div>`;
+}
+
+for(let t=1;t<=3;t++){
+  document.getElementById("trim"+t).innerHTML = [1,2,3,4,5].map(c=>buildClass(t,c)).join("");
+}
+
+function showTrim(n){
+  document.querySelectorAll(".trim").forEach(x=>x.classList.add("hidden"));
+  document.getElementById("trim"+n).classList.remove("hidden");
+  document.querySelectorAll(".tabs .tab").forEach((b,i)=>b.classList.toggle("active",i===n-1));
+}
+function showClass(t,n){
+  const box=document.getElementById("trim"+t);
+  box.querySelectorAll(".sheet").forEach(x=>x.classList.remove("active"));
+  document.getElementById(`sheet-${t}-${n}`).classList.add("active");
+  box.querySelectorAll(".subtab").forEach(b=>b.classList.remove("active"));
+  [...box.querySelectorAll(".subtab")].find(b=>b.textContent.trim()==="Classe "+n).classList.add("active");
+}
+function addStudent(t,c){
+  const body=document.querySelector(`#sheet-${t}-${c} tbody`);
+  const row=document.createElement("tr");
+  const n=body.rows.length+1;
+  row.innerHTML=`<td class="num">${String(n).padStart(2,"0")}</td>
+  <td class="name"><input type="text" placeholder="Nom et prénoms"></td>
+  ${CRITERIA.map(x=>`<td>${inputNum(x[0],parseFloat(x[2]))}</td>`).join("")}
+  <td class="total"><input class="note totalInput" type="number" min="0" max="20" step="0.25" readonly></td>
+  <td>${inputNum("devoir")}</td><td>${inputNum("composition")}</td><td>${inputNum("projet")}</td>`;
+  body.appendChild(row); attachCalculation(row);
+}
+function clearClass(t,c){
+  if(!confirm("Vider toutes les données de cette classe ?")) return;
+  const sheet=document.getElementById(`sheet-${t}-${c}`);
+  sheet.querySelectorAll("input").forEach((el,i)=>{ if(!el.readOnly && !el.classList.contains("note")) el.value=""; else if(el.classList.contains("note")) el.value="";});
+}
+function attachCalculation(row){
+  row.querySelectorAll("input.note:not(.totalInput)").forEach(inp=>inp.addEventListener("input",()=>{
+    let s=0;
+    CRITERIA.forEach(x=>{s += parseFloat(row.querySelector("."+x[0])?.value||0)});
+    row.querySelector(".totalInput").value=Math.min(20,s).toFixed(2).replace(/\.00$/,"");
+  }));
+}
+document.querySelectorAll("tbody tr").forEach(attachCalculation);
+
+function saveData(){
+  const data={};
+  document.querySelectorAll("input,textarea,select").forEach((el,i)=>{
+    if(el.type==="button") return;
+    data[i]={value:el.value};
+  });
+  localStorage.setItem("carnetNotes2026_2027",JSON.stringify(data));
+  alert("Les données ont été enregistrées dans ce navigateur.");
+}
+function loadData(){
+  const raw=localStorage.getItem("carnetNotes2026_2027");
+  if(!raw){alert("Aucune sauvegarde trouvée.");return;}
+  const data=JSON.parse(raw);
+  document.querySelectorAll("input,textarea,select").forEach((el,i)=>{if(data[i])el.value=data[i].value});
+  alert("Les données ont été restaurées.");
+}
+function clearAll(){
+  if(!confirm("Effacer toutes les données enregistrées dans ce carnet ?")) return;
+  localStorage.removeItem("carnetNotes2026_2027");
+  location.reload();
+}
+
+const hours=["08:00 – 09:00","09:00 – 10:00","10:00 – 11:00","11:00 – 12:00","12:00 – 13:00","13:00 – 14:00","14:00 – 15:00","15:00 – 16:00","16:00 – 17:00"];
+document.getElementById("scheduleBody").innerHTML=hours.map(h=>`<tr><th>${h}</th>${[1,2,3,4,5].map(()=>`<td contenteditable="true"></td>`).join("")}</tr>`).join("");
+</script>
+</body>
+</html>
